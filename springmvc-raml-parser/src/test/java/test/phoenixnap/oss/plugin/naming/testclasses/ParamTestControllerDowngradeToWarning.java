@@ -14,6 +14,7 @@ package test.phoenixnap.oss.plugin.naming.testclasses;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -40,5 +41,17 @@ public class ParamTestControllerDowngradeToWarning {
 	public String endpointWithURIParamGet() {
 		return null;
 	}
+
+/*
+	@RequestMapping(value = "/base/endpointWithGet", method = { RequestMethod.GET})
+	public String endpointWithGet(@RequestParam(required=true) String param1, @RequestParam(required=false) String param2) {
+		return null;
+	}
+
+	@RequestMapping(value = "/base/endpointWithURIParam/{uriParam}", method = { RequestMethod.GET})
+	public String endpointWithURIParamGet(@RequestParam(required=true) String param3, @RequestParam(required=false) String param4) {
+		return null;
+	}
+*/
 
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.phoenixnap.oss.ramlapisync.raml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -35,15 +36,6 @@ import com.phoenixnap.oss.ramlapisync.javadoc.JavaDocStore;
 import com.phoenixnap.oss.ramlapisync.naming.JavaTypeHelper;
 import com.phoenixnap.oss.ramlapisync.naming.Pair;
 import com.phoenixnap.oss.ramlapisync.naming.SchemaHelper;
-import com.phoenixnap.oss.ramlapisync.raml.RamlAction;
-import com.phoenixnap.oss.ramlapisync.raml.RamlActionType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlMimeType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactory;
-import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactoryOfFactories;
-import com.phoenixnap.oss.ramlapisync.raml.RamlParamType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlQueryParameter;
-import com.phoenixnap.oss.ramlapisync.raml.RamlResource;
-import com.phoenixnap.oss.ramlapisync.raml.RamlResponse;
 
 /**
  * Common service scanning functionality
@@ -372,7 +364,7 @@ public abstract class ResourceParser {
 	 */
 	public RamlResource extractResourceInfo(Class<?> clazz) {
 		logger.info("Parsing resource: " + clazz.getSimpleName() + " ");
-		RamlResource resource = RamlModelFactoryOfFactories.createRamlModelFactoryV08().createRamlResource();
+		RamlResource resource = RamlModelFactoryOfFactories.createRamlModelFactoryFor(RamlVersion.V10).createRamlResource("/" + getResourceName(clazz));
 		resource.setRelativeUri("/" + getResourceName(clazz));
 		resource.setDisplayName(clazz.getSimpleName()); // TODO allow the Api annotation to specify
 														// this stuff :)

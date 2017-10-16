@@ -33,6 +33,6 @@ public interface RamlChecker {
 	 * @param implemented The Raml as generated from the implementation
 	 * @return A pair containing a set of Warnings and Errors (as first and second respectively)
 	 */
-	public Pair<Set<Issue>, Set<Issue>> check (RamlRoot published, RamlRoot implemented);
+	Pair<Set<Issue>, Set<Issue>> check (RamlRoot published, RamlRoot implemented);
 
 }

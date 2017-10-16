@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.phoenixnap.oss.ramlapisync.raml.*;
 import org.apache.commons.io.IOUtils;
 import org.jsonschema2pojo.Annotator;
 import org.jsonschema2pojo.DefaultGenerationConfig;
@@ -55,12 +56,6 @@ import com.phoenixnap.oss.ramlapisync.data.ApiBodyMetadata;
 import com.phoenixnap.oss.ramlapisync.data.ApiParameterMetadata;
 import com.phoenixnap.oss.ramlapisync.javadoc.JavaDocEntry;
 import com.phoenixnap.oss.ramlapisync.javadoc.JavaDocStore;
-import com.phoenixnap.oss.ramlapisync.raml.RamlMimeType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactory;
-import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactoryOfFactories;
-import com.phoenixnap.oss.ramlapisync.raml.RamlParamType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlQueryParameter;
-import com.phoenixnap.oss.ramlapisync.raml.RamlRoot;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JPackage;
 
@@ -94,8 +89,8 @@ public class SchemaHelper {
      */
     public static Map<String, RamlQueryParameter> convertParameterToQueryParameter(final Parameter param,
             final String paramComment) {
-        RamlQueryParameter queryParam = RamlModelFactoryOfFactories.createRamlModelFactoryV08().createRamlQueryParameter();
         ApiParameterMetadata parameterMetadata = new ApiParameterMetadata(param);
+        RamlQueryParameter queryParam = RamlModelFactoryOfFactories.createRamlModelFactoryFor(RamlVersion.V10).createRamlQueryParameter(param.getName());
 
         RamlParamType type = mapSimpleType(param.getType());
 
@@ -173,7 +168,7 @@ public class SchemaHelper {
         }
 
         try {
-            RamlModelFactory ramlModelFactory = RamlModelFactoryOfFactories.createRamlModelFactoryV08();
+            RamlModelFactory ramlModelFactory = RamlModelFactoryOfFactories.createRamlModelFactoryFor(RamlVersion.V10);
             for (Field field : param.getType().getDeclaredFields()) {
                 if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())
                         && !java.lang.reflect.Modifier.isTransient(field.getModifiers())

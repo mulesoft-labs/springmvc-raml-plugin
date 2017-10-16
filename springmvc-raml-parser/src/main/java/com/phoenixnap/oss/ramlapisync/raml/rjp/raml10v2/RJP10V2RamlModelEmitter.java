@@ -12,10 +12,15 @@
  */
 package com.phoenixnap.oss.ramlapisync.raml.rjp.raml10v2;
 
+import org.raml.builder.RamlDocumentBuilder;
+import org.raml.simpleemitter.Emitter;
 import org.raml.v2.internal.impl.emitter.tck.TckEmitter;
 
 import com.phoenixnap.oss.ramlapisync.raml.RamlModelEmitter;
 import com.phoenixnap.oss.ramlapisync.raml.RamlRoot;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Implementation based on the Raml 1.0 Parser
@@ -29,6 +34,16 @@ public class RJP10V2RamlModelEmitter implements RamlModelEmitter {
 
     @Override
     public String dump(RamlRoot ramlRoot) {
-		throw new UnsupportedOperationException();
+
+        Emitter emitter = new Emitter();
+        RJP10V2RamlRoot v10RamlRoot = (RJP10V2RamlRoot) ramlRoot;
+        RamlDocumentBuilder builder = v10RamlRoot.asBuilder();
+        try {
+            emitter.emit(builder.buildModel(), new OutputStreamWriter(System.err));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 }

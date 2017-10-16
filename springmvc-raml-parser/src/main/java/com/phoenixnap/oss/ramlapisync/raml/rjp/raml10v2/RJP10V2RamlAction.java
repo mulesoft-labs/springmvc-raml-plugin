@@ -16,6 +16,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.raml.builder.BodyBuilder;
+import org.raml.builder.MethodBuilder;
+import org.raml.builder.ParameterBuilder;
+import org.raml.builder.ResponseBuilder;
 import org.raml.v2.api.model.v10.methods.Method;
 
 import com.phoenixnap.oss.ramlapisync.naming.RamlTypeHelper;
@@ -34,11 +38,13 @@ import com.phoenixnap.oss.ramlapisync.raml.RamlSecurityReference;
  * @author Aleksandar Stojsavljevic
  * @since 0.10.0
  */
-public class RJP10V2RamlAction implements RamlAction {
+public class RJP10V2RamlAction implements RamlAction, Buildable<MethodBuilder> {
 
     private static RJP10V2RamlModelFactory ramlModelFactory = new RJP10V2RamlModelFactory();
 
     private final Method method;
+    private final MethodBuilder methodBuilder;
+    private final RamlActionType action;
 
     private Map<String, RamlResponse> responses = new LinkedHashMap<>();
 
@@ -47,9 +53,26 @@ public class RJP10V2RamlAction implements RamlAction {
     private Map<String, RamlHeader> headers = new LinkedHashMap<>();
 
     private Map<String, RamlQueryParameter> queryParameters = new LinkedHashMap<>();
+    private RamlResource containingResource;
 
     public RJP10V2RamlAction(Method method) {
+
         this.method = method;
+        this.action = null;
+        this.methodBuilder = MethodBuilder.method("foo");
+    }
+
+    public RJP10V2RamlAction(RamlActionType action) {
+
+        this.method = null;
+        this.action = action;
+        this.methodBuilder = MethodBuilder.method(action.name().toLowerCase());
+    }
+
+
+    @Override
+    public MethodBuilder asBuilder() {
+        return methodBuilder;
     }
 
     /**
@@ -62,16 +85,24 @@ public class RJP10V2RamlAction implements RamlAction {
 
     @Override
     public RamlActionType getType() {
-        return RamlActionType.valueOf(this.method.method().toUpperCase());
+        if ( method != null ) {
+            return RamlActionType.valueOf(this.method.method().toUpperCase());
+        } else {
+            return action;
+        }
     }
 
     @Override
     public Map<String, RamlQueryParameter> getQueryParameters() {
-    	return ramlModelFactory.transformToUnmodifiableMap(
-                method.queryParameters(),
-                queryParameters,
-                ramlModelFactory::createRamlQueryParameter,
-                r -> RamlTypeHelper.getName(r));
+        if ( method!=null) {
+            return ramlModelFactory.transformToUnmodifiableMap(
+                    method.queryParameters(),
+                    queryParameters,
+                    ramlModelFactory::createRamlQueryParameter,
+                    r -> RamlTypeHelper.getName(r));
+        } else {
+            return queryParameters;
+        }
     }
 
     @Override
@@ -85,12 +116,17 @@ public class RJP10V2RamlAction implements RamlAction {
 
     @Override
     public void addResponse(String httpStatus, RamlResponse response) {
-    	throw new UnsupportedOperationException();
+
+        methodBuilder.withResponses(ResponseBuilder.response(209));
     }
 
     @Override
     public RamlResource getResource() {
-        return ramlModelFactory.createRamlResource(method.resource());
+        if ( method != null ) {
+            return ramlModelFactory.createRamlResource(method.resource());
+        } else {
+            return containingResource;
+        }
     }
 
     @Override
@@ -104,16 +140,24 @@ public class RJP10V2RamlAction implements RamlAction {
 
     @Override
     public Map<String, RamlMimeType> getBody() {
-    	return ramlModelFactory.transformToUnmodifiableMap(
-                method.body(),
-                body,
-                ramlModelFactory::createRamlMimeType,
-				r -> RamlTypeHelper.getName(r));
+        if (method != null) {
+            return ramlModelFactory.transformToUnmodifiableMap(
+                    method.body(),
+                    body,
+                    ramlModelFactory::createRamlMimeType,
+                    r -> RamlTypeHelper.getName(r));
+        } else {
+            return body;
+        }
     }
 
     @Override
     public void setBody(Map<String, RamlMimeType> body) {
-    	throw new UnsupportedOperationException();
+
+        body.forEach((k,v) -> {
+
+
+        });
     }
 
     @Override
@@ -128,7 +172,7 @@ public class RJP10V2RamlAction implements RamlAction {
 
     @Override
     public void setDescription(String description) {
-    	throw new UnsupportedOperationException();
+    	methodBuilder.description(description);
     }
     
     @Override
@@ -154,12 +198,14 @@ public class RJP10V2RamlAction implements RamlAction {
 
     @Override
     public void setResource(RamlResource resource) {
-    	throw new UnsupportedOperationException();
+
+        this.containingResource = resource;
     }
 
     @Override
     public void setType(RamlActionType actionType) {
-    	throw new UnsupportedOperationException();
+
+        methodBuilder.withBodies(BodyBuilder.body(actionType.name()));
     }
 
     @Override
@@ -169,10 +215,12 @@ public class RJP10V2RamlAction implements RamlAction {
 
     @Override
     public void addQueryParameters(Map<String, RamlQueryParameter> queryParameters) {
-    	throw new UnsupportedOperationException();
-    }
 
-    private void addQueryParameter(String key, RamlQueryParameter ramlQueryParameter) {
-    	throw new UnsupportedOperationException();
+        queryParameters.forEach((k,v) -> {
+
+            ParameterBuilder builder = ((RJP10V2RamlQueryParameter) v).asBuilder();
+            methodBuilder.withQueryParameter(builder);
+            queryParameters.put(k,v);
+        });
     }
 }

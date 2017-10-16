@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.raml.builder.ResourceBuilder;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.methods.Method;
 import org.raml.v2.api.model.v10.resources.Resource;
@@ -24,38 +25,62 @@ import com.phoenixnap.oss.ramlapisync.raml.RamlUriParameter;
  * @author Aleksandar Stojsavljevic
  * @since 0.10.0
  */
-public class RJP10V2RamlResource implements RamlResource {
+public class RJP10V2RamlResource implements RamlResource, Buildable<ResourceBuilder> {
 	
 	private static RJP10V2RamlModelFactory ramlModelFactory = new RJP10V2RamlModelFactory();
 	
     private final Resource delegate;
-    
+    private final ResourceBuilder resourceBuilder;
+    private final String relativeUri;
+
     private transient Map<String, RamlResource> childResourceMap;
+    private RamlResource parentResource;
+    private Map<RamlActionType, RamlAction> actions = new HashMap<>();
+
 
     public RJP10V2RamlResource(Resource resource) {
         this.delegate = resource;
         
         rebuildChildren();
+        resourceBuilder = ResourceBuilder.resource(resource.resourcePath());
+        relativeUri = resource.resourcePath();
+    }
+
+    public RJP10V2RamlResource(String resourceName) {
+        this.delegate = null;
+        this.relativeUri = resourceName;
+
+        rebuildChildren();
+        resourceBuilder = ResourceBuilder.resource(resourceName);
     }
 
     private void rebuildChildren() {
-    	childResourceMap = new LinkedHashMap<String, RamlResource>();
-    	List<Resource> resources = delegate.resources();
-    	if (resources != null) {
-	    	for (Resource resource : resources) {
-	        	childResourceMap.put(resource.relativeUri().value(), new RJP10V2RamlResource(resource));	        	
-	        }
-	    }
+    	childResourceMap = new LinkedHashMap<>();
+    	if ( delegate != null ) {
+            List<Resource> resources = delegate.resources();
+            if (resources != null) {
+                for (Resource resource : resources) {
+                    childResourceMap.put(resource.relativeUri().value(), new RJP10V2RamlResource(resource));
+                }
+            }
+        }
 	}
 
-	@Override
+    @Override
+    public ResourceBuilder asBuilder() {
+        return resourceBuilder;
+    }
+
+    @Override
     public Map<String, RamlResource> getResources() {
         return childResourceMap;
     }
 
     @Override
     public void addResource(String path, RamlResource childResource) {
-        throw new UnsupportedOperationException();
+        ResourceBuilder resourceBuilder = ramlModelFactory.extractBuilderFrom(childResource);
+        this.resourceBuilder.withResources(resourceBuilder);
+        this.childResourceMap.put(path, childResource);
     }
 
     @Override
@@ -75,16 +100,26 @@ public class RJP10V2RamlResource implements RamlResource {
 
     @Override
     public String getRelativeUri() {
-		return (this.delegate.relativeUri() == null) ? null : this.delegate.relativeUri().value();
+        if ( delegate != null ) {
+            return (this.delegate.relativeUri() == null) ? null : this.delegate.relativeUri().value();
+        } else {
+
+            return relativeUri;
+        }
     }
 
     @Override
     public Map<RamlActionType, RamlAction> getActions() {
-    	Map<RamlActionType, RamlAction> actions = new HashMap<RamlActionType, RamlAction>();
-    	for(Method method : this.delegate.methods()){
-    		actions.put(RamlActionType.valueOf(method.method().toUpperCase()), new RJP10V2RamlAction(method));
-    	}
-    	return actions;
+    	Map<RamlActionType, RamlAction> actions = new HashMap<>();
+
+    	if ( delegate != null ) {
+            for (Method method : this.delegate.methods()) {
+                actions.put(RamlActionType.valueOf(method.method().toUpperCase()), new RJP10V2RamlAction(method));
+            }
+            return actions;
+        } else {
+    	    return this.actions;
+        }
     }
 
     @Override
@@ -145,15 +180,28 @@ public class RJP10V2RamlResource implements RamlResource {
 
     @Override
     public String getUri() {
-    	String outUri = delegate.relativeUri().value();
-    	Resource parentResource = delegate.parentResource();
-    	while (parentResource != null) {
-    		if (parentResource.relativeUri() != null) {
-        		outUri = parentResource.relativeUri().value() + outUri;
-        	} 
-    		parentResource = parentResource.parentResource();
-    	}
-    	return outUri;
+
+        String outUri;
+        if ( delegate != null ) {
+            outUri = delegate.relativeUri().value();
+            Resource parentResource = delegate.parentResource();
+            while (parentResource != null) {
+                if (parentResource.relativeUri() != null) {
+                    outUri = parentResource.relativeUri().value() + outUri;
+                }
+                parentResource = parentResource.parentResource();
+            }
+            return outUri;
+        } else {
+
+            outUri = relativeUri;
+            if ( parentResource != null ) {
+
+                outUri = parentResource.getUri() + outUri;
+            }
+
+            return outUri;
+        }
     }
 
     @Override
@@ -182,7 +230,8 @@ public class RJP10V2RamlResource implements RamlResource {
 
     @Override
     public void setParentResource(RamlResource parentResource) {
-        throw new UnsupportedOperationException();
+
+        this.parentResource = parentResource;
     }
 
     @Override
@@ -197,43 +246,57 @@ public class RJP10V2RamlResource implements RamlResource {
 
     @Override
     public void setParentUri(String parentUri) {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 
     @Override
     public void setRelativeUri(String relativeUri) {
-        throw new UnsupportedOperationException();
+
+        resourceBuilder.relativeUri(relativeUri);
     }
 
     @Override
     public void setDisplayName(String displayName) {
-        throw new UnsupportedOperationException();
+
+        resourceBuilder.displayName(displayName);
     }
 
     @Override
     public void setDescription(String description) {
-        throw new UnsupportedOperationException();
+
+        resourceBuilder.description(description);
     }
 
     @Override
     public RamlAction getAction(RamlActionType actionType) {
-        List<Method> methods = delegate.methods();
-        for(Method method : methods){
-        	if(method.method().equalsIgnoreCase(actionType.toString())){
-        		return ramlModelFactory.createRamlAction(method);
-        	}
+
+        if ( delegate != null ) {
+            List<Method> methods = delegate.methods();
+            for(Method method : methods){
+                if(method.method().equalsIgnoreCase(actionType.toString())){
+                    return ramlModelFactory.createRamlAction(method);
+                }
+            }
+        } else {
+
+            return actions.get(actionType);
         }
+
         return null;
     }
 
     @Override
     public void addAction(RamlActionType apiAction, RamlAction action) {
-        throw new UnsupportedOperationException();
+
+        RJP10V2RamlAction rjp10V2RamlAction = (RJP10V2RamlAction) action;
+        resourceBuilder.withMethods(rjp10V2RamlAction.asBuilder());
+        this.actions.put(apiAction, action);
     }
 
     @Override
     public void addActions(Map<RamlActionType, RamlAction> actions) {
-        throw new UnsupportedOperationException();
+
+        actions.forEach(this::addAction);
     }
 
     Resource getResource() {

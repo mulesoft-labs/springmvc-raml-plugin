@@ -20,7 +20,9 @@ import com.phoenixnap.oss.ramlapisync.generation.rules.RamlLoader;
 import com.phoenixnap.oss.ramlapisync.parser.ResourceParser;
 import com.phoenixnap.oss.ramlapisync.parser.SpringMvcResourceParser;
 import com.phoenixnap.oss.ramlapisync.raml.InvalidRamlResourceException;
+import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactoryOfFactories;
 import com.phoenixnap.oss.ramlapisync.raml.RamlRoot;
+import com.phoenixnap.oss.ramlapisync.raml.RamlVersion;
 import com.phoenixnap.oss.ramlapisync.verification.Issue;
 import com.phoenixnap.oss.ramlapisync.verification.IssueLocation;
 import com.phoenixnap.oss.ramlapisync.verification.IssueSeverity;
@@ -256,6 +258,8 @@ public class RamlVerifierTest {
 		RamlRoot published = RamlLoader.loadRamlFromFile("test-queryparam-success.raml");
 		Class<?>[] classesToGenerate = new Class[] { ParamTestController.class, ParamTestControllerDowngradeToWarning.class };
 		RamlRoot computed = generator.generateRamlForClasses("test", "0.0.1", "/", classesToGenerate, Collections.emptySet()).getRaml();
+
+		RamlModelFactoryOfFactories.createRamlModelFactoryFor(RamlVersion.V10).createRamlModelEmitter().dump(computed);
 
 		RamlVerifier verifier = new RamlVerifier(published, computed, Collections.emptyList(), Collections.singletonList(new ActionQueryParameterChecker()), null);
 		assertTrue("Check that there are errors", verifier.hasErrors());

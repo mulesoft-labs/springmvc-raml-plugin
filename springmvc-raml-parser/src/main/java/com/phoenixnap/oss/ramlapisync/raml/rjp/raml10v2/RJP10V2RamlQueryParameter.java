@@ -14,6 +14,7 @@ package com.phoenixnap.oss.ramlapisync.raml.rjp.raml10v2;
 
 import java.math.BigDecimal;
 
+import org.raml.builder.ParameterBuilder;
 import org.raml.v2.api.model.v10.datamodel.NumberTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
@@ -29,14 +30,25 @@ import com.phoenixnap.oss.ramlapisync.raml.RamlQueryParameter;
  * @author Aleksandar Stojsavljevic
  * @since 0.10.0
  */
-public class RJP10V2RamlQueryParameter extends RamlQueryParameter {
+public class RJP10V2RamlQueryParameter extends RamlQueryParameter implements Buildable<ParameterBuilder> {
 
     private static RJP10V2RamlModelFactory ramlModelFactory = new RJP10V2RamlModelFactory();
 
     private final TypeDeclaration queryParameter;
+    private final ParameterBuilder parameterBuilder;
+    private String typeName;
+    private boolean repeat;
 
     public RJP10V2RamlQueryParameter(TypeDeclaration queryParameter) {
+
         this.queryParameter = queryParameter;
+        this.parameterBuilder = ParameterBuilder.parameter(queryParameter.name());
+    }
+
+    public RJP10V2RamlQueryParameter(String queryParameter) {
+
+        this.queryParameter = null;
+        this.parameterBuilder = ParameterBuilder.parameter(queryParameter);
     }
 
     /**
@@ -49,13 +61,26 @@ public class RJP10V2RamlQueryParameter extends RamlQueryParameter {
     }
 
     @Override
+    public ParameterBuilder asBuilder() {
+
+        return parameterBuilder;
+    }
+
+    @Override
     public void setType(RamlParamType paramType) {
-        throw new UnsupportedOperationException();
+
+        this.typeName = paramType.name().toLowerCase();
+        if ( repeat ) {
+            parameterBuilder.ofType(typeName + "[]");
+        } else {
+            parameterBuilder.ofType(typeName);
+        }
     }
 
     @Override
     public void setRequired(boolean required) {
-    	throw new UnsupportedOperationException();
+
+        parameterBuilder.required(required);
     }
 
     @Override
@@ -65,7 +90,8 @@ public class RJP10V2RamlQueryParameter extends RamlQueryParameter {
 
     @Override
     public void setDescription(String description) {
-    	throw new UnsupportedOperationException();
+
+        parameterBuilder.description(description);
     }
 
     @Override
@@ -89,7 +115,7 @@ public class RJP10V2RamlQueryParameter extends RamlQueryParameter {
 
     @Override
     public void setDisplayName(String displayName) {
-    	throw new UnsupportedOperationException();
+    	parameterBuilder.displayName(displayName);
     }
 
     @Override
@@ -99,7 +125,15 @@ public class RJP10V2RamlQueryParameter extends RamlQueryParameter {
 
     @Override
     public void setRepeat(boolean repeat) {
-    	throw new UnsupportedOperationException();
+        this.repeat = repeat;
+
+        if ( typeName != null) {
+            if ( repeat ) {
+                parameterBuilder.ofType(typeName + "[]");
+            } else {
+                parameterBuilder.ofType(typeName);
+            }
+        }
     }
 
     @Override

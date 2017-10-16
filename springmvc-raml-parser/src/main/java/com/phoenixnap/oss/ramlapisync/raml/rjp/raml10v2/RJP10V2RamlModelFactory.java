@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.raml.builder.ResourceBuilder;
 import org.raml.v2.api.RamlModelBuilder;
 import org.raml.v2.api.RamlModelResult;
 import org.raml.v2.api.model.v10.api.Api;
@@ -63,7 +64,7 @@ public class RJP10V2RamlModelFactory implements RamlModelFactory {
 
     @Override
     public RamlRoot createRamlRoot() {
-        throw new UnsupportedOperationException();
+        return new RJP10V2RamlRoot();
     }
 
     @Override
@@ -81,6 +82,10 @@ public class RJP10V2RamlModelFactory implements RamlModelFactory {
         if(resource == null) {
             return null;
         }
+
+        if ( resource instanceof String ) {
+            return new RJP10V2RamlResource((String) resource);
+        }
         return new RJP10V2RamlResource((Resource)resource);
     }
 
@@ -89,7 +94,13 @@ public class RJP10V2RamlModelFactory implements RamlModelFactory {
     	if (action == null) {
             return null;
         }
-        return new RJP10V2RamlAction((Method) action);
+
+        if ( action instanceof RamlActionType ) {
+
+    	    return new RJP10V2RamlAction((RamlActionType) action);
+        } else {
+            return new RJP10V2RamlAction((Method) action);
+        }
     }
 
     @Override
@@ -171,7 +182,16 @@ public class RJP10V2RamlModelFactory implements RamlModelFactory {
     	if(queryParameter == null) {
             return null;
         }
-        return new RJP10V2RamlQueryParameter((TypeDeclaration)queryParameter);
+
+        if ( queryParameter instanceof  TypeDeclaration ) {
+            return new RJP10V2RamlQueryParameter((TypeDeclaration) queryParameter);
+        }
+
+        if ( queryParameter instanceof String ) {
+    	    return new RJP10V2RamlQueryParameter((String) queryParameter);
+        }
+
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -273,5 +293,11 @@ public class RJP10V2RamlModelFactory implements RamlModelFactory {
     
     TypeDeclaration extractQueryParameter(RamlQueryParameter ramlQueryParameter) {
         return ((RJP10V2RamlQueryParameter)ramlQueryParameter).getQueryParameter();
+    }
+
+    public ResourceBuilder extractBuilderFrom(RamlResource childResource) {
+        RJP10V2RamlResource resource = (RJP10V2RamlResource) childResource;
+        ResourceBuilder resourceBuilder = resource.asBuilder();
+        return resourceBuilder;
     }
 }

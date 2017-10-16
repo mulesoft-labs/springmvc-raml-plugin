@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.raml.builder.RamlDocumentBuilder;
+import org.raml.builder.ResourceBuilder;
 import org.raml.v2.api.model.v10.api.Api;
 import org.raml.v2.api.model.v10.api.Library;
 import org.raml.v2.api.model.v10.bodies.MimeType;
@@ -24,18 +26,24 @@ import com.phoenixnap.oss.ramlapisync.raml.RamlSpecNotFullySupportedException;
  * @author kurtpa
  * @author aleks
  */
-public class RJP10V2RamlRoot implements RamlRoot {
+public class RJP10V2RamlRoot implements RamlRoot, Buildable<RamlDocumentBuilder> {
 
     private static RJP10V2RamlModelFactory ramlModelFactory = new RJP10V2RamlModelFactory();
 
     private final Api api;
+    private final RamlDocumentBuilder ramlDocumentBuilder = RamlDocumentBuilder.document();
+
     private Map<String, RamlResource> resources = new LinkedHashMap<>();
 
     public RJP10V2RamlRoot(Api api) {
         this.api = api;
     }
 
-	/**
+    public RJP10V2RamlRoot() {
+        this.api = null;
+    }
+
+    /**
 	 * Expose internal representation only package private
 	 * 
 	 * @return the internal model
@@ -43,6 +51,11 @@ public class RJP10V2RamlRoot implements RamlRoot {
 	Api getApi() {
 		return this.api;
 	}
+
+    @Override
+    public RamlDocumentBuilder asBuilder() {
+        return ramlDocumentBuilder;
+    }
 
     @Override
     public Map<String, RamlResource> getResources() {
@@ -53,13 +66,18 @@ public class RJP10V2RamlRoot implements RamlRoot {
 	                ramlModelFactory::createRamlResource,
 	                r -> r.relativeUri().value());
     	} else {
-    		return Collections.emptyMap();
+    		return resources;
     	}
     }
 
     @Override
     public void addResource(String path, RamlResource childResource) {
-        api.resources().add(ramlModelFactory.extractResource(childResource));
+        if ( api != null ) {
+            api.resources().add(ramlModelFactory.extractResource(childResource));
+        }
+
+        ResourceBuilder resourceBuilder = ramlModelFactory.extractBuilderFrom(childResource);
+        ramlDocumentBuilder.withResources(resourceBuilder);
         resources.put(path, childResource);
     }
 
@@ -147,21 +165,22 @@ public class RJP10V2RamlRoot implements RamlRoot {
     
     @Override
     public void setBaseUri(String baseUri) {
-        throw new UnsupportedOperationException();
+        ramlDocumentBuilder.baseUri(baseUri);
     }
 
     @Override
     public void setVersion(String version) {
-        throw new UnsupportedOperationException();
+        ramlDocumentBuilder.version(version);
     }
 
     @Override
     public void setTitle(String title) {
-        throw new UnsupportedOperationException();
+        ramlDocumentBuilder.title(title);
     }
 
     @Override
     public void setDocumentation(List<RamlDocumentationItem> documentationItems) {
+	    //ramlDocumentBuilder.description("please join documentation");
         throw new UnsupportedOperationException();
     }
 
@@ -172,7 +191,8 @@ public class RJP10V2RamlRoot implements RamlRoot {
 
     @Override
     public void setMediaType(String mediaType) {
-        throw new UnsupportedOperationException();
+
+	    ramlDocumentBuilder.mediaType(mediaType);
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.phoenixnap.oss.ramlapisync.raml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -49,15 +50,6 @@ import com.phoenixnap.oss.ramlapisync.naming.NamingHelper;
 import com.phoenixnap.oss.ramlapisync.naming.Pair;
 import com.phoenixnap.oss.ramlapisync.naming.RamlHelper;
 import com.phoenixnap.oss.ramlapisync.naming.SchemaHelper;
-import com.phoenixnap.oss.ramlapisync.raml.RamlAction;
-import com.phoenixnap.oss.ramlapisync.raml.RamlActionType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlMimeType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactory;
-import com.phoenixnap.oss.ramlapisync.raml.RamlModelFactoryOfFactories;
-import com.phoenixnap.oss.ramlapisync.raml.RamlParamType;
-import com.phoenixnap.oss.ramlapisync.raml.RamlResource;
-import com.phoenixnap.oss.ramlapisync.raml.RamlResponse;
-import com.phoenixnap.oss.ramlapisync.raml.RamlUriParameter;
 
 /**
  * Service scanner that handles generation from a Spring MVC codebase
@@ -431,11 +423,11 @@ public class SpringMvcResourceParser extends ResourceParser {
 	@Override
 	protected void extractAndAppendResourceInfo(Class<?> clazz, Method method, JavaDocEntry docEntry, RamlResource parentResource) {
 
-		RamlModelFactory ramlModelFactory = RamlModelFactoryOfFactories.createRamlModelFactoryV08();
+		RamlModelFactory ramlModelFactory = RamlModelFactoryOfFactories.createRamlModelFactoryFor(RamlVersion.V10);
 
 		Map<RamlActionType, String> methodActions = getHttpMethodAndName(clazz, method);
 		for (Entry<RamlActionType, String> methodAction : methodActions.entrySet()) {
-			RamlAction action = ramlModelFactory.createRamlAction();
+			RamlAction action = ramlModelFactory.createRamlAction(methodAction.getKey());
 			RamlActionType apiAction = methodAction.getKey();
 			String apiName = methodAction.getValue();
 			//Method assumes that the name starts with /
@@ -491,7 +483,7 @@ public class SpringMvcResourceParser extends ResourceParser {
 																	// contains a resource
 
 				if (idResource == null) {
-					idResource = ramlModelFactory.createRamlResource();
+					idResource = ramlModelFactory.createRamlResource(resourceName);
 					idResource.setRelativeUri(resourceName);
 					String displayName = StringUtils.capitalize(partialUrl) + " Resource";
 					String resourceDescription = displayName;
