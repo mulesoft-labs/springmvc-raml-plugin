@@ -1,0 +1,31 @@
+#%RAML 1.0 ResourceType
+
+usage: This resourceType should be used for any collection items.
+description: The collection of <<resourcePathName>>
+
+uses: 
+  endpoints: ../libraries/endpoint-types.raml
+  
+get:
+  description: Get all <<resourcePathName>>
+  responses:
+    200:
+      body:
+        application/json:
+          type: endpoints.BaseEndpoint[]
+post:
+  description: Create a new <<resourcePathName | !singularize>>
+  body:
+    application/json:
+      # schema: <<resourcePathName | !singularize>>
+      type: endpoints.BaseEndpoint
+  responses: 
+    201:
+      body: 
+        application/json:
+    400:
+      body: 
+        application/json:
+    500:
+      body: 
+        application/json:

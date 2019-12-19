@@ -1,9 +1,0 @@
-{
-   "$schema": "http://json-schema.org/draft-04/schema",
-   "title": "Collection of B",
-   "type": "array",
-   "uniqueItems": true,
-   "items": {
-      "$ref": "pojogen/B.json"
-   }
-}
