@@ -146,6 +146,9 @@ NOTE: This is different from a previous default. Use `RESOURCES` to get `0.x` be
 ### rule
 (optional, default: `com.phoenixnap.oss.ramlplugin.raml2code.rules.Spring4ControllerStubRule`) The rule class to be used for code generation.
 
+### useAnnotationStyle
+(optional, default: `JACKSON2`) The JSON serializer JACKSON2 | GSON.
+
 #### Available Rules
 - **com.phoenixnap.oss.ramlapisync.generation.rule.Spring4ControllerStubRule**:
 The standard rule. It creates simple controller stubs classes with Spring MVC annotations and empty method bodies (like in v.0.2.4).

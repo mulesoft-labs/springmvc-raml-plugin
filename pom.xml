@@ -34,9 +34,9 @@
 	</licenses>
 
 	<scm>
-	  <connection>scm:git:git@github.com:phoenixnap/springmvc-raml-plugin.git</connection>
-	  <developerConnection>scm:git:git@github.com:phoenixnap/springmvc-raml-plugin.git</developerConnection>
-	  <url>git@github.com:phoenixnap/springmvc-raml-plugin.git</url>
+	  <connection>scm:git:git@github.com:mulesoft-labs/springmvc-raml-plugin.git</connection>
+	  <developerConnection>scm:git:git@github.com:mulesoft-labs/springmvc-raml-plugin.git</developerConnection>
+	  <url>git@github.com:mulesoft-labs/springmvc-raml-plugin.git</url>
 	</scm>
 
 	<properties>
@@ -175,7 +175,11 @@
 	<build>
 		<pluginManagement>
 		<plugins>
-
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+            </plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -311,13 +315,17 @@
 	</profiles>
 
 	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
 		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<id>mule-ci-releases</id>
+			<name>MuleSoft Release Repository</name>
+			<url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-releases/</url>
 		</repository>
+		<snapshotRepository>
+			<id>mule-ci-snapshots</id>
+			<name>MuleSoft Snapshot Repository</name>
+			<url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
 	</distributionManagement>
+
 </project>
