@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.text.IsEqualCompressingWhiteSpace;
+import org.jsonschema2pojo.AnnotationStyle;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -63,9 +64,23 @@ public abstract class AbstractRuleTestBase {
 		defaultRamlParser = new RamlParser("/api");
 	}
 
+	/**
+	 * add GSON at the end of the name if correspond
+	 * @param fileName
+	 * @return
+	 */
+	public static String getFileAnnotationDiscriminator(String fileName){
+		if ( TestConfig.isGSONAnnotationStyle() )
+			fileName += "GSON";
+		return fileName;
+	}
+
 	@BeforeClass
 	public static void initRaml() throws InvalidRamlResourceException {
 		TestConfig.resetConfig();
+		if ( System.getProperty("isGSON") != null &&  System.getProperty("isGSON").toLowerCase().equals("true"))
+			TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+
 		RAML = RamlLoader.loadRamlFromFile(RESOURCE_BASE + "test-single-controller.raml");
 	}
 
@@ -124,7 +139,9 @@ public abstract class AbstractRuleTestBase {
 
 	protected void verifyGeneratedCode(String name, String generatedCode) throws Exception {
 		String removedSerialVersionUID = removeSerialVersionUID(generatedCode);
-		String expectedCode = getTextFromFile(VALIDATOR_BASE + name + ".java.txt");
+		String fileName = VALIDATOR_BASE + name + ".java.txt";
+		logger.debug("comparing to file " + fileName);
+		String expectedCode = getTextFromFile(fileName);
 
 		try {
 			MatcherAssert.assertThat(name + " is not generated correctly.", removedSerialVersionUID,

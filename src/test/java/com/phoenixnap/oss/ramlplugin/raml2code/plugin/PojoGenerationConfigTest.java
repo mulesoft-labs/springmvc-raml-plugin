@@ -24,6 +24,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.jsonschema2pojo.AnnotationStyle;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import org.junit.Test;
 public class PojoGenerationConfigTest {
 	private static final String GOAL_NAME = "generate-springmvc-endpoints";
 	private static final String DEFAULT_CONFIG = "default-config";
+	private static final String DEFAULT_CONFIG_GSON = "default-config-gson";
 
 	@Rule
 	public MojoRule mojoRule = new MojoRule();
@@ -55,6 +57,30 @@ public class PojoGenerationConfigTest {
 		Assert.assertTrue(generationConfig.isIncludeHashcodeAndEquals());
 		Assert.assertTrue(generationConfig.isIncludeToString());
 		Assert.assertTrue(generationConfig.isInitializeCollections());
+		mojo.execute();
+	}
+
+	@Test
+	public void testDefaultConfigWithGSON() throws Exception {
+		final SpringMvcEndpointGeneratorMojo mojo = (SpringMvcEndpointGeneratorMojo) loadMojo(DEFAULT_CONFIG_GSON, GOAL_NAME);
+		final PojoGenerationConfig generationConfig = mojo.generationConfig;
+		Assert.assertNotNull(generationConfig);
+		Assert.assertEquals("1.6", generationConfig.getTargetVersion());
+		Assert.assertFalse(generationConfig.isUseBigDecimals());
+		Assert.assertFalse(generationConfig.isUseDoubleNumbers());
+		Assert.assertFalse(generationConfig.isUseLongIntegers());
+		Assert.assertFalse(generationConfig.isUsePrimitives());
+		Assert.assertFalse(generationConfig.isUseCommonsLang3());
+		Assert.assertFalse(generationConfig.isGenerateBuilders());
+		Assert.assertTrue(generationConfig.isIncludeAccessors());
+		Assert.assertTrue(generationConfig.isIncludeJsr303Annotations());
+		Assert.assertTrue(generationConfig.isIncludeAdditionalProperties());
+		Assert.assertFalse(generationConfig.isIncludeConstructors());
+		Assert.assertFalse(generationConfig.isConstructorsRequiredPropertiesOnly());
+		Assert.assertTrue(generationConfig.isIncludeHashcodeAndEquals());
+		Assert.assertTrue(generationConfig.isIncludeToString());
+		Assert.assertTrue(generationConfig.isInitializeCollections());
+		Assert.assertEquals(AnnotationStyle.GSON, generationConfig.getAnnotationStyle());
 		mojo.execute();
 	}
 

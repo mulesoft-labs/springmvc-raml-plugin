@@ -13,6 +13,7 @@
 package com.phoenixnap.oss.ramlplugin.raml2code.plugin;
 
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jsonschema2pojo.AnnotationStyle;
 import org.jsonschema2pojo.DefaultGenerationConfig;
 
 public class PojoGenerationConfig extends DefaultGenerationConfig {
@@ -151,6 +152,21 @@ public class PojoGenerationConfig extends DefaultGenerationConfig {
 	 */
 	@Parameter(required = false, readonly = true, defaultValue = "false")
 	protected Boolean useBigIntegers = Boolean.FALSE;
+
+	/**
+	 * We will pass on this configuration to the jsonschema2pojo library for
+	 * select serializer framework
+	 *
+	 * Suported:
+	 * JACKSON
+	 * JACKSON1
+	 * JACKSON2
+	 * GSON
+	 *
+	 */
+	@Parameter(required = false, readonly = true)
+	protected AnnotationStyle useAnnotationStyle;
+
 
 	@Override
 	public boolean isUseBigDecimals() {
@@ -302,6 +318,16 @@ public class PojoGenerationConfig extends DefaultGenerationConfig {
 			return useBigIntegers;
 		}
 		return super.isUseBigIntegers();
+	}
+
+	@Override
+	public AnnotationStyle getAnnotationStyle(){
+		if (useAnnotationStyle != null) {
+			return useAnnotationStyle;
+		}
+
+		return super.getAnnotationStyle();
+
 	}
 
 	public void setUseBigIntegers(boolean useBigIntegers) {

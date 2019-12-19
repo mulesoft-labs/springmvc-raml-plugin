@@ -1,11 +1,11 @@
 /*
  * Copyright 2002-2019 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
@@ -24,20 +24,23 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+
+import org.apache.commons.lang.NotImplementedException;
 import org.raml.v2.api.model.v10.datamodel.DateTimeTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+
 import com.phoenixnap.oss.ramlplugin.raml2code.helpers.CodeModelHelper;
 import com.phoenixnap.oss.ramlplugin.raml2code.helpers.NamingHelper;
 import com.phoenixnap.oss.ramlplugin.raml2code.helpers.RamlTypeHelper;
+import com.phoenixnap.oss.ramlplugin.raml2code.helpers.SerializerHelper;
 import com.phoenixnap.oss.ramlplugin.raml2code.plugin.Config;
 import com.phoenixnap.oss.ramlplugin.raml2code.raml.RamlDataType;
 import com.sun.codemodel.ClassType;
@@ -247,10 +250,10 @@ public class PojoBuilder extends AbstractBuilder {
 		JFieldVar field = this.pojo.field(JMod.PROTECTED, resolvedType, toJavaName(name), jExpression);
 
 		if (!Objects.equals(typeDeclaration.name(), toJavaName(name))) {
-			field.annotate(JsonProperty.class).param("value", typeDeclaration.name());
+			field.annotate(SerializerHelper.getFieldAnnotationClass() ).param("value", typeDeclaration.name());
 		}
 
-		if (resolvedType.name().equals(Date.class.getSimpleName())) {
+		if (resolvedType.name().equals(Date.class.getSimpleName()) && SerializerHelper.shouldAnnotateDate()) {
 			JAnnotationUse jAnnotationUse = field.annotate(JsonFormat.class);
 			String format = null;
 			if (typeDeclaration instanceof DateTimeTypeDeclaration) {
@@ -319,7 +322,7 @@ public class PojoBuilder extends AbstractBuilder {
 	 * Adds a constructor with all the fields in the POJO. If no fields are
 	 * present it will not create an empty constructor because default
 	 * constructor (without fields) is already present.
-	 * 
+	 *
 	 * @return This builder instance
 	 */
 	public PojoBuilder withCompleteConstructor() {
@@ -407,7 +410,7 @@ public class PojoBuilder extends AbstractBuilder {
 	/**
 	 * Generates implementations for hashCode(), equals() and toString() methods
 	 * if the plugin has been configured to do so.
-	 * 
+	 *
 	 * @param excludeFieldsFromToString
 	 *            list of parameters to exclude from toString() method
 	 */
@@ -418,23 +421,6 @@ public class PojoBuilder extends AbstractBuilder {
 		}
 		if (Config.getPojoConfig().isIncludeToString()) {
 			withToString(excludeFieldsFromToString);
-		}
-	}
-
-	public void withJsonDiscriminator(List<RamlDataType> childTypes, String discriminator) {
-		this.pojo.annotate(JsonTypeInfo.class).param("property", discriminator).param("use", JsonTypeInfo.Id.NAME)
-				.param("include", As.EXISTING_PROPERTY).param("visible", true);
-
-		JAnnotationUse param = this.pojo.annotate(JsonSubTypes.class).param("value", discriminator);
-		JAnnotationArrayMember jAnnotationArrayMember = param.paramArray("value");
-		for (RamlDataType childType : childTypes) {
-			String discriminatorValue = childType.getDiscriminatorValue();
-			if (StringUtils.isEmpty(discriminatorValue)) {
-				// default value for discriminator is the name of the type
-				discriminatorValue = childType.getType().name();
-			}
-			jAnnotationArrayMember.annotate(JsonSubTypes.Type.class).param("value", resolveType(childType.getType().name())).param("name",
-					discriminatorValue);
 		}
 	}
 
@@ -575,6 +561,38 @@ public class PojoBuilder extends AbstractBuilder {
 		}
 
 		return invocation;
+	}
+
+
+	public void withJsonDiscriminator(List<RamlDataType> childTypes, String discriminator) {
+		switch( Config.getPojoConfig().getAnnotationStyle() ){
+			case GSON :
+				break;
+			case JACKSON:
+			case JACKSON1:
+			case JACKSON2: JacksonChildrenDiscriminator(childTypes, discriminator);
+				break;
+			default: throw new NotImplementedException("Serialization "+ Config.getPojoConfig().getAnnotationStyle().toString() +" not suported, use GSON and JACKSON2");
+		}
+
+	}
+
+	public void JacksonChildrenDiscriminator(List<RamlDataType> childTypes, String discriminator) {
+
+		this.pojo.annotate(JsonTypeInfo.class).param("property", discriminator).param("use", JsonTypeInfo.Id.NAME)
+				.param("include", As.EXISTING_PROPERTY).param("visible", true);
+
+		JAnnotationUse param = this.pojo.annotate(JsonSubTypes.class).param("value", discriminator);
+		JAnnotationArrayMember jAnnotationArrayMember = param.paramArray("value");
+		for (RamlDataType childType : childTypes) {
+			String discriminatorValue = childType.getDiscriminatorValue();
+			if (StringUtils.isEmpty(discriminatorValue)) {
+				// default value for discriminator is the name of the type
+				discriminatorValue = childType.getType().name();
+			}
+			jAnnotationArrayMember.annotate(JsonSubTypes.Type.class).param("value", resolveType(childType.getType().name())).param("name",
+					discriminatorValue);
+		}
 	}
 
 }

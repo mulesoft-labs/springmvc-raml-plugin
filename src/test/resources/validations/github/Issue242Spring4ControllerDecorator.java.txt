@@ -23,7 +23,7 @@ public class Person implements Serializable
 
     /**
      * Creates a new Person.
-     * 
+     *
      */
     public Person() {
         super();
@@ -31,7 +31,7 @@ public class Person implements Serializable
 
     /**
      * Creates a new Person.
-     * 
+     *
      */
     public Person(String kind, String name) {
         super();
@@ -41,7 +41,7 @@ public class Person implements Serializable
 
     /**
      * Returns the kind.
-     * 
+     *
      * @return
      *     kind
      */
@@ -52,7 +52,7 @@ public class Person implements Serializable
 
     /**
      * Set the kind.
-     * 
+     *
      * @param kind
      *     the new kind
      */
@@ -62,7 +62,7 @@ public class Person implements Serializable
 
     /**
      * Returns the name.
-     * 
+     *
      * @return
      *     name
      */
@@ -73,7 +73,7 @@ public class Person implements Serializable
 
     /**
      * Set the name.
-     * 
+     *
      * @param name
      *     the new name
      */
@@ -117,14 +117,14 @@ import org.springframework.http.ResponseEntity;
 /**
  * No description
  * (Generated with springmvc-raml-parser v.@project.version@)
- * 
+ *
  */
 public interface BookController {
 
 
     /**
      * No description
-     * 
+     *
      */
     public ResponseEntity<?> updatePerson(BigDecimal bookId,
         @Valid
@@ -151,7 +151,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * No description
  * (Generated with springmvc-raml-parser v.@project.version@)
- * 
+ *
  */
 @RestController
 @RequestMapping("/api/books")
@@ -165,7 +165,7 @@ public class BookControllerDecorator
 
     /**
      * No description
-     * 
+     *
      */
     @RequestMapping(value = "/{bookId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePerson(

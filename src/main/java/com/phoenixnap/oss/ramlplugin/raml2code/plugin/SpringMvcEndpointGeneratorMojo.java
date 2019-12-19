@@ -40,7 +40,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.jsonschema2pojo.Annotator;
-import org.jsonschema2pojo.Jackson1Annotator;
+import org.jsonschema2pojo.GsonAnnotator;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -454,7 +454,7 @@ public class SpringMvcEndpointGeneratorMojo extends AbstractMojo {
 	private void generateModelSources(JCodeModel codeModel, ApiBodyMetadata body, File rootDir) {
 		boolean build = false;
 		if (codeModel == null) {
-			Annotator annotator = this.useJackson1xCompatibility ? new Jackson1Annotator(this.generationConfig) : null;
+			Annotator annotator = new GsonAnnotator(this.generationConfig);
 			this.getLog().info("Generating Model object for: " + body.getName());
 			build = true;
 			if (this.generationConfig == null && annotator == null) {

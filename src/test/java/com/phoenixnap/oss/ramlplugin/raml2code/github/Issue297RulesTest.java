@@ -1,5 +1,6 @@
 package com.phoenixnap.oss.ramlplugin.raml2code.github;
 
+import org.jsonschema2pojo.AnnotationStyle;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import com.phoenixnap.oss.ramlplugin.raml2code.rules.SpringFeignClientInterfaceR
 public class Issue297RulesTest extends GitHubAbstractRuleTestBase {
 
 	private static final String RAML = "issue-282.raml";
+
 
 	@Before
 	public void init() {
@@ -41,26 +43,60 @@ public class Issue297RulesTest extends GitHubAbstractRuleTestBase {
 
 	@Test
 	public void check_generated_for_stub() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		loadRaml(RAML);
 		rule = new Spring4ControllerStubRule();
 		rule.apply(getControllerMetadata(), jCodeModel);
-		verifyGeneratedCode("Issue297-1Spring4ControllerStub");
+
+		verifyGeneratedCode( getFileAnnotationDiscriminator("Issue297-1Spring4ControllerStub") );
+	}
+
+	@Test
+	public void check_generated_for_stub_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		loadRaml(RAML);
+		rule = new Spring4ControllerStubRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+
+		verifyGeneratedCode( getFileAnnotationDiscriminator("Issue297-1Spring4ControllerStub") );
 	}
 
 	@Test
 	public void check_generated_for_interface() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		loadRaml(RAML);
 		rule = new Spring4ControllerInterfaceRule();
 		rule.apply(getControllerMetadata(), jCodeModel);
-		verifyGeneratedCode("Issue297-1Spring4ControllerInterface");
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue297-1Spring4ControllerInterface"));
+	}
+
+	@Test
+	public void check_generated_for_interface_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		loadRaml(RAML);
+		rule = new Spring4ControllerInterfaceRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue297-1Spring4ControllerInterface"));
 	}
 
 	@Test
 	public void check_generated_for_resttemplate_client() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		loadRaml(RAML);
 		rule = new Spring4RestTemplateClientRule();
 		rule.apply(getControllerMetadata(), jCodeModel);
-		verifyGeneratedCode("Issue297-1Spring4RestTemplateClient");
+
+		verifyGeneratedCode( getFileAnnotationDiscriminator("Issue297-1Spring4RestTemplateClient"));
+	}
+
+	@Test
+	public void check_generated_for_resttemplate_client_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		loadRaml(RAML);
+		rule = new Spring4RestTemplateClientRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+
+		verifyGeneratedCode( getFileAnnotationDiscriminator("Issue297-1Spring4RestTemplateClient"));
 	}
 
 	@Test

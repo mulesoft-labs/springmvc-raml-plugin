@@ -1,0 +1,153 @@
+#%RAML 1.0 Library
+usage: Defines the endpoint data types
+
+types:
+
+  AuthModeBaseConfig:
+    type: object
+    discriminator: authType
+    properties:
+      authType: string
+    additionalProperties: false
+
+  AuthModeNone:
+    type: AuthModeBaseConfig
+    displayName: Auth Mode - None
+    discriminatorValue: NONE
+    properties:
+
+  AuthModeBasic:
+    type: AuthModeBaseConfig
+    displayName: Auth Mode - Basic Authentication
+    description: This can be used for HTTP Outbound authentication.
+    discriminatorValue: BASIC
+    properties:
+      username: string
+      password: string
+
+  AuthModeClientCredentials:
+    type: AuthModeBaseConfig
+    displayName: Auth Mode - Client ID/Secret Credentials
+    description: This can be used for HTTP Outbound authentication.
+    discriminatorValue: CLIENT_CREDENTIALS
+    properties:
+      clientId: string
+      clientSecret: string
+      clientIdHeader: string
+      clientSecretHeader: string
+
+  AuthModeAPIKey:
+    type: AuthModeBaseConfig
+    displayName: Auth Mode - API Key in Header
+    description: This can be used for HTTP Outbound authentication.
+    discriminatorValue: API_KEY
+    properties:
+      apiKey: string
+      httpHeaderName: string
+
+  AuthModeOAuth:
+    type: AuthModeBaseConfig
+    displayName: Auth Mode - OAuth 2.0 Token
+    description: This can be used for HTTP Outbound authentication.
+    discriminatorValue: OAUTH_TOKEN
+    properties:
+      tokenUrl: string
+      clientId: string
+      clientSecret: string
+
+  AuthModePKI:
+    type: AuthModeBaseConfig
+    displayName: Auth Mode - Private Identity File
+    description: This is a possible future extension for SFTP security.
+    discriminatorValue: PKI
+    properties:
+      identityFilePath: string
+      passphrase: string
+      algorithm: string
+
+  endpointType:
+    type: object
+    properties:
+      id: string
+      protocol: string
+      description: string
+      label: string
+
+  baseEndpointConfig:
+    type: object
+    displayName: Base Endpoint Config object
+    discriminator: configName
+    properties:
+      configName: string
+      serverAddress:
+        type: string
+        displayName: Server Address
+        required: false
+        description: Defines Server/Host Address
+      serverPort:
+        type: integer
+        displayName: Server Port
+        required: false
+      authMode:
+        type: AuthModeBaseConfig
+        required: false
+        default: { 'authType': 'NONE'}
+    additionalProperties: true
+
+  BaseEndpoint:
+    type: object
+    displayName: Base Endpoint
+    discriminator: endpointType
+    properties:
+      id :
+        type: string
+        required: false
+      name: string
+      endpointType:
+        type: string
+        required: false
+      config:
+        type: baseEndpointConfig
+        properties:
+
+  httpConfig:
+    type: baseEndpointConfig
+    discriminatorValue: http
+    properties:
+      protocol:
+        enum: [ 'HTTP', 'HTTPS' ]
+        default: 'HTTP'
+      serverAddress: string
+      serverPort:
+        type: integer
+        default: 80
+      path: string
+      allowedMethods:
+        enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
+        default: 'POST'
+      authMode:
+        type: AuthModeBaseConfig
+
+  http:
+    type: BaseEndpoint
+    displayName: HTTP Endpoint
+    discriminatorValue: HTTP
+    properties:
+      config: httpConfig
+
+  as9Config:
+    type: baseEndpointConfig
+    discriminatorValue: AS9
+    properties:
+      protocol:
+        enum: [ 'HTTP', 'HTTPS' ]
+        default: 'HTTP'
+      httpEndpointUrl?:
+        type: string
+
+  as9:
+    type: BaseEndpoint
+    displayName: AS9 Endpoint
+    #discriminatorValue: AS2
+    properties:
+      config: as9Config

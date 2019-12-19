@@ -31,7 +31,6 @@ import org.raml.v2.api.model.v10.system.types.AnnotableStringType;
 import org.raml.v2.api.model.v10.system.types.MarkdownString;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.phoenixnap.oss.ramlplugin.raml2code.data.ApiBodyMetadata;
 import com.phoenixnap.oss.ramlplugin.raml2code.interpreters.RamlInterpretationResult;
 import com.phoenixnap.oss.ramlplugin.raml2code.interpreters.RamlInterpreterFactory;

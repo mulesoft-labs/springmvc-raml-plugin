@@ -2,6 +2,8 @@ package com.phoenixnap.oss.ramlplugin.raml2code.rules;
 
 import com.phoenixnap.oss.ramlplugin.raml2code.plugin.PojoGenerationConfig;
 
+import org.jsonschema2pojo.AnnotationStyle;
+
 public class TestPojoConfig extends PojoGenerationConfig {
 
 	public void setIncludeJsr303Annotations(boolean includeJsr303Annotations) {
@@ -30,5 +32,9 @@ public class TestPojoConfig extends PojoGenerationConfig {
 
 	public void setInitializeCollections(boolean initializeCollections) {
 		this.initializeCollections = initializeCollections;
+	}
+
+	public void setAnnotationStyle(AnnotationStyle style) {
+		this.useAnnotationStyle = style;
 	}
 }

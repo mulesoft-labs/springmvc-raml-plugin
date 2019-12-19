@@ -20,13 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.jsonschema2pojo.Annotator;
-import org.jsonschema2pojo.DefaultGenerationConfig;
-import org.jsonschema2pojo.GenerationConfig;
-import org.jsonschema2pojo.Jackson2Annotator;
-import org.jsonschema2pojo.SchemaGenerator;
-import org.jsonschema2pojo.SchemaMapper;
-import org.jsonschema2pojo.SchemaStore;
+import org.jsonschema2pojo.*;
 import org.jsonschema2pojo.rules.RuleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -251,7 +245,7 @@ public class SchemaHelper {
 
 	/**
 	 * Extracts the value of a specified parameter in a schema
-	 * 
+	 *
 	 * @param searchString
 	 *            element to search for
 	 * @param schema
@@ -370,9 +364,11 @@ public class SchemaHelper {
 		if (config == null) {
 			config = getDefaultGenerationConfig();
 		}
+
 		if (annotator == null) {
-			annotator = new Jackson2Annotator(config);
+			annotator =  SerializerHelper.getAnnotator();//new GsonAnnotator(config);
 		}
+
 		RuleFactory ruleFactory = new RuleFactory(config, annotator, schemaStore);
 
 		SchemaMapper mapper = new SchemaMapper(ruleFactory, new SchemaGenerator());
@@ -435,7 +431,10 @@ public class SchemaHelper {
 	public static GenerationConfig getGenerationConfig(Boolean generateBuilders, Boolean includeAdditionalProperties,
 			Boolean includeDynamicAccessors, Boolean useLongIntegers) {
 		return new DefaultGenerationConfig() {
-
+			@Override
+			public AnnotationStyle getAnnotationStyle(){
+				return AnnotationStyle.GSON;
+			}
 			@Override
 			public boolean isGenerateBuilders() { // set config option by
 													// overriding method

@@ -13,6 +13,10 @@ public abstract class GitHubAbstractRuleTestBase extends AbstractRuleTestBase {
 
 	protected void verifyGeneratedCode(String name, String generatedCode) throws Exception {
 		String removedSerialVersionUID = removeSerialVersionUID(generatedCode);
+
+		String fileName = this.gitHubValidatorBase + name + ".java.txt";
+		logger.debug("comparing to file " + fileName);
+
 		String expectedCode = getTextFromFile(this.gitHubValidatorBase + name + ".java.txt");
 
 		try {

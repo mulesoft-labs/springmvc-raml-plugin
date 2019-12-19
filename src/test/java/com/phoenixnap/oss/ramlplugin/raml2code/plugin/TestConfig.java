@@ -4,6 +4,8 @@ import com.phoenixnap.oss.ramlplugin.raml2code.plugin.SpringMvcEndpointGenerator
 import com.phoenixnap.oss.ramlplugin.raml2code.plugin.SpringMvcEndpointGeneratorMojo.OverrideNamingLogicWith;
 import com.phoenixnap.oss.ramlplugin.raml2code.rules.TestPojoConfig;
 
+import org.jsonschema2pojo.AnnotationStyle;
+
 public class TestConfig {
 
 	public static void resetConfig() {
@@ -70,4 +72,13 @@ public class TestConfig {
 	public static void setGeneratedAnnotation(boolean generatedAnnotation) {
 		Config.setGeneratedAnnotation(generatedAnnotation);
 	}
+
+	public static void setAnnotationStyle(AnnotationStyle style) {
+		Config.getPojoConfig().useAnnotationStyle = style;
+	}
+
+	public static boolean isGSONAnnotationStyle() {
+		return Config.getPojoConfig().getAnnotationStyle().equals(AnnotationStyle.GSON);
+	}
+
 }

@@ -464,6 +464,9 @@ public class RamlInterpreterTest extends AbstractRuleTestBase {
 
 	@Test
 	public void checkTypeOfDates() throws Exception {
+		//as GSON doesn't have annotations for time ignore
+		if (TestConfig.isGSONAnnotationStyle())
+			return;
 
 		JDefinedClass pojo = getResponsePOJO("/validations", "Validation");
 

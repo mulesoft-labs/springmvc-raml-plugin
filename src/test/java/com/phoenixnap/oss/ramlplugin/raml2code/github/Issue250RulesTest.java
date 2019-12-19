@@ -1,5 +1,6 @@
 package com.phoenixnap.oss.ramlplugin.raml2code.github;
 
+import org.jsonschema2pojo.AnnotationStyle;
 import org.junit.Test;
 
 import com.phoenixnap.oss.ramlplugin.raml2code.plugin.SpringMvcEndpointGeneratorMojo.MethodsNamingLogic;
@@ -16,6 +17,7 @@ public class Issue250RulesTest extends GitHubAbstractRuleTestBase {
 
 	@Test
 	public void verify_objects_naming_logic() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		loadRaml("issue-250.raml");
 		rule = new Spring4ControllerDecoratorRule();
 		rule.apply(getControllerMetadata(), jCodeModel);
@@ -24,6 +26,7 @@ public class Issue250RulesTest extends GitHubAbstractRuleTestBase {
 
 	@Test
 	public void verify_overriding_naming_logic_with_displayName() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		TestConfig.setOverrideNamingLogicWith(OverrideNamingLogicWith.DISPLAY_NAME);
 		loadRaml("issue-250.raml");
 		rule = new Spring4ControllerDecoratorRule();
@@ -34,6 +37,7 @@ public class Issue250RulesTest extends GitHubAbstractRuleTestBase {
 
 	@Test
 	public void verify_overriding_naming_logic_with_annotation() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		TestConfig.setOverrideNamingLogicWith(OverrideNamingLogicWith.ANNOTATION);
 		loadRaml("issue-250.raml");
 		rule = new Spring4ControllerDecoratorRule();
@@ -44,6 +48,7 @@ public class Issue250RulesTest extends GitHubAbstractRuleTestBase {
 
 	@Test
 	public void verify_resources_naming_logic() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		TestConfig.setMethodsNamingLogic(MethodsNamingLogic.RESOURCES);
 		loadRaml("issue-250.raml");
 		rule = new Spring4ControllerDecoratorRule();
@@ -54,6 +59,7 @@ public class Issue250RulesTest extends GitHubAbstractRuleTestBase {
 
 	@Test
 	public void verify_resources_naming_logic_2() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.JACKSON2);
 		TestConfig.setMethodsNamingLogic(MethodsNamingLogic.RESOURCES);
 		loadRaml("issue-250-1.raml");
 		rule = new Spring4ControllerDecoratorRule();
@@ -61,4 +67,60 @@ public class Issue250RulesTest extends GitHubAbstractRuleTestBase {
 		verifyGeneratedCode("Issue250-5Spring4ControllerDecorator");
 		TestConfig.setMethodsNamingLogic(null);
 	}
+
+
+	@Test
+	public void verify_objects_naming_logic_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		loadRaml("issue-250.raml");
+		rule = new Spring4ControllerDecoratorRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue250-1Spring4ControllerDecorator"));
+	}
+
+	@Test
+	public void verify_overriding_naming_logic_with_displayName_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		TestConfig.setOverrideNamingLogicWith(OverrideNamingLogicWith.DISPLAY_NAME);
+		loadRaml("issue-250.raml");
+		rule = new Spring4ControllerDecoratorRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue250-2Spring4ControllerDecorator"));
+		TestConfig.setOverrideNamingLogicWith(null);
+	}
+
+	@Test
+	public void verify_overriding_naming_logic_with_annotation_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		TestConfig.setOverrideNamingLogicWith(OverrideNamingLogicWith.ANNOTATION);
+		loadRaml("issue-250.raml");
+		rule = new Spring4ControllerDecoratorRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue250-3Spring4ControllerDecorator"));
+		TestConfig.setOverrideNamingLogicWith(null);
+	}
+
+	@Test
+	public void verify_resources_naming_logic_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		TestConfig.setMethodsNamingLogic(MethodsNamingLogic.RESOURCES);
+		loadRaml("issue-250.raml");
+		rule = new Spring4ControllerDecoratorRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue250-4Spring4ControllerDecorator"));
+		TestConfig.setMethodsNamingLogic(null);
+	}
+
+	@Test
+	public void verify_resources_naming_logic_2_gson() throws Exception {
+		TestConfig.setAnnotationStyle(AnnotationStyle.GSON);
+		TestConfig.setMethodsNamingLogic(MethodsNamingLogic.RESOURCES);
+		loadRaml("issue-250-1.raml");
+		rule = new Spring4ControllerDecoratorRule();
+		rule.apply(getControllerMetadata(), jCodeModel);
+		verifyGeneratedCode(getFileAnnotationDiscriminator("Issue250-5Spring4ControllerDecorator"));
+		TestConfig.setMethodsNamingLogic(null);
+	}
+
+
 }
