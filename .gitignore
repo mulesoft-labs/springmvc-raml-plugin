@@ -1,5 +1,6 @@
 *.ipr
 *.iml
+*.DS_Store
 /.metadata
 .project
 .settings
@@ -8,3 +9,5 @@ target
 /iconv.dll
 .idea
 /.recommenders
+.sts4-cache/
+/.factorypath
