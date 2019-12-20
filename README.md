@@ -1,6 +1,6 @@
 [![PhoenixNAP Logo](https://phoenixnap.com/wp-content/themes/phoenixnap-v2/img/v2/logo.svg)](https://phoenixnap.com)
 
-# Spring MVC-RAML Plugin [![Build Status](https://travis-ci.org/phoenixnap/springmvc-raml-plugin.svg?branch=master)](https://travis-ci.org/phoenixnap/springmvc-raml-plugin) [![Apache License 2](https://img.shields.io/badge/license-ASF2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.phoenixnap.oss/springmvc-raml-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.phoenixnap.oss/springmvc-raml-plugin/badge.svg)
+# Spring MVC-RAML Plugin [![Build Status](https://api.travis-ci.com/mulesoft-labs/springmvc-raml-plugin.svg?branch=feat%2FGsonSupport)](https://travis-ci.org/mulesoft-labs/springmvc-raml-plugin) [![Apache License 2](https://img.shields.io/badge/license-ASF2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 The Spring MVC-RAML project aims to enforce contract-first approach for projects using Spring MVC framework. The idea is to manually maintain RAML file as a single source of truth and to use this plugin to generate web layer - Spring controllers and domain objects. If the plugin is used as part of a build, application's code will always be in line with RAML documentation.
 
