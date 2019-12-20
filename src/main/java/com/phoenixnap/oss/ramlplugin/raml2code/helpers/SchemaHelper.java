@@ -20,7 +20,15 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.jsonschema2pojo.*;
+import org.jsonschema2pojo.Annotator;
+import org.jsonschema2pojo.GenerationConfig;
+
+import org.jsonschema2pojo.SchemaStore;
+import org.jsonschema2pojo.SchemaGenerator;
+import org.jsonschema2pojo.SchemaMapper;
+import org.jsonschema2pojo.DefaultGenerationConfig;
+import org.jsonschema2pojo.AnnotationStyle;
+
 import org.jsonschema2pojo.rules.RuleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
