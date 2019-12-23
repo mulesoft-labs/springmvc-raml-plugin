@@ -1,0 +1,53 @@
+#%RAML 1.0 ResourceType
+
+usage: This resourceType should be used for any singular item.
+
+
+uses: 
+  endpoints: ../libraries/endpoint-types.raml
+  
+
+description: Single <<resourcePathName | !singularize>>
+get:
+  description: Get <<resourcePathName>>
+  responses:
+    200:
+      body: 
+        application/json:
+          type: <<resourceType>>
+    404:
+      body: 
+        application/json:
+    500:
+      body: 
+        application/json:
+put:
+  description: Replace <<resourcePathName | !singularize>>
+  body:
+    application/json:
+      type: <<resourceType>>
+  responses: 
+    204:
+      body:
+        application/json:
+    400:
+      body:
+        application/json:
+    404:
+      body:
+        application/json:
+    500:
+      body: 
+        application/json: 
+delete?:
+  description: Delete <<resourcePathName | !singularize>>
+  responses:
+    204:
+      body: 
+        application/json:
+    404:
+      body: 
+        application/json:
+    500:
+      body: 
+        application/json:

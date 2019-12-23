@@ -1,0 +1,26 @@
+#%RAML 1.0
+title: API
+version: v1.0.0
+
+baseUri: /v1 # baseUri: /v1
+
+uses:
+  endpoints: libraries/endpoint-types.raml
+
+resourceTypes:
+  endpoints-collection: !include resourceTypes/endpoints-collection.raml
+  member: !include resourceTypes/member.raml
+
+/endpoints:
+  type:
+    endpoints-collection:
+      resourceType: endpoints.BaseEndpoint
+  get:
+    queryParameters:
+      name?: string
+
+
+  /{endpointId}:
+    type:
+      member:
+        resourceType: endpoints.BaseEndpoint
