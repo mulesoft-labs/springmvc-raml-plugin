@@ -111,12 +111,12 @@ node {
             }
         }
 
-/*
+
         stage ("Nexus IQ") {
             withEnv(["PATH=${jdkHome}/bin:${mvnHome}/bin:${env.PATH}", "M2_HOME=${mvnHome}"]) {
-                nexusIQScan("b2b-solution-services",
+                nexusIQScan("springmvc-raml-plugin",
                 "http://nexus-iq-0:8070",
-                "b2b-solution-model-jooq/jooq-model-partners-service/target/jooq-model-partners-service-*.jar")
+                "target/springmvc-raml-plugin-*.jar")
             }
         }
 
@@ -162,6 +162,6 @@ node {
                 echo 'Skipping Release'
             }
         }
-        */
+        
     }
 }
