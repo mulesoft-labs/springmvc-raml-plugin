@@ -232,7 +232,7 @@ public class RamlTypeHelper {
 	 * {@link Date} property.
 	 * 
 	 * @param jAnnotationUse
-	 *            annotation to add pattern. Can be for: {@link JsonFormat} or
+	 *            annotation to add pattern. Can be for: {@link com.fasterxml.jackson.annotation.JsonFormat} or
 	 *            {@link DateTimeFormat}
 	 * @param type
 	 *            RAML type of the property

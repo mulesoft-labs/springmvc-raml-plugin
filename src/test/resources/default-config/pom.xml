@@ -23,7 +23,7 @@
          <plugin>
             <groupId>com.mule.phoenixnap.oss</groupId>
             <artifactId>springmvc-raml-plugin</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.1.1-MULE-001-SNAPSHOT</version>
             <configuration>
                <ramlPath>src/main/resources/api.raml</ramlPath>
                <basePackage>com.test.samples</basePackage>

@@ -1,6 +1,7 @@
 package com.phoenixnap.oss.ramlplugin.raml2code.rules;
 
 import org.junit.Test;
+import org.junit.AfterClass;
 
 import com.phoenixnap.oss.ramlplugin.raml2code.plugin.TestConfig;
 
@@ -14,6 +15,11 @@ public class ShortcutMappingsTest extends AbstractRuleTestBase {
 
 	public ShortcutMappingsTest() {
 		TestConfig.setResourceDepthInClassNames(2);
+	}
+
+	@AfterClass
+	public static void resetConfig(){
+		TestConfig.resetConfig();
 	}
 
 	@Test

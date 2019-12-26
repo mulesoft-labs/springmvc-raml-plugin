@@ -42,7 +42,7 @@ public abstract class SerializerHelper {
 
     /**
      * Get class from corresponding serializer to annotate POJO fieds
-     * @return
+     * @return annotation class based on the configuration.
      */
     public static Class<? extends Annotation> getFieldAnnotationClass() {
         Class<? extends Annotation> clazz = null;
@@ -67,7 +67,7 @@ public abstract class SerializerHelper {
 
     /**
      * Get correct Annotator given serializator
-     * @return
+     * @return the annotator instance based on the configuration.
      */
     public static Annotator getAnnotator(){
         logger.debug("SerializerHelper.getAnnotator start");

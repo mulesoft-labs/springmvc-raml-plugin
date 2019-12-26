@@ -3,12 +3,19 @@ package com.phoenixnap.oss.ramlplugin.raml2code.rules;
 
 import org.junit.Test;
 
+import org.junit.AfterClass;
+
 import com.phoenixnap.oss.ramlplugin.raml2code.plugin.TestConfig;
 
 public class Spring4ControllerRulesHttpHeadersTest extends AbstractRuleTestBase {
 
 	public Spring4ControllerRulesHttpHeadersTest() {
 		TestConfig.setInjectHttpHeadersParameter(true);
+	}
+
+	@AfterClass
+	public static void resetConfig(){
+		TestConfig.resetConfig();
 	}
 
 	@Test
