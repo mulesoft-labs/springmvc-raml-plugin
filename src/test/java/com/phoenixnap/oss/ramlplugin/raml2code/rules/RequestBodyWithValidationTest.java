@@ -10,6 +10,7 @@ public class RequestBodyWithValidationTest extends AbstractRuleTestBase {
 
 	@BeforeClass
 	public static void initRaml() throws InvalidRamlResourceException {
+		AbstractRuleTestBase.initRaml();
 		loadRaml("test-requestbody-with-validation.raml");
 	}
 

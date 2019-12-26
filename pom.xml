@@ -16,6 +16,7 @@
 	<url>https://github.com/phoenixnap/springmvc-raml-plugin/tree/master/springmvc-raml-parser</url>
   	<packaging>maven-plugin</packaging>
 
+
 	<developers>
 		<developer>
 			<name>Aleksandar Stojsavljevic</name>
